@@ -1,5 +1,6 @@
 Microblog
 ===================
+[![CircleCI](https://circleci.com/gh/anton97johansson/microblog.svg?style=svg)](https://circleci.com/gh/anton97johansson/microblog)
 
 [![Join the chat at https://gitter.im/dbwebb-se/devops](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dbwebb-se/devops?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -28,7 +29,7 @@ source venv/bin/activate
 make install-dev
 ```
 
-If you are on Windows and Cygwin you will probably have troubles installing the pip package `cryptography`. Common errors are missing `python.h`, `gcc`, `cffi` and `openssl`. 
+If you are on Windows and Cygwin you will probably have troubles installing the pip package `cryptography`. Common errors are missing `python.h`, `gcc`, `cffi` and `openssl`.
 
 
 ### Database
