@@ -113,3 +113,4 @@ def test_follow_posts(test_app): # pylint: disable=unused-argument
     assert follow2 == [post2, post3]
     assert follow3 == [post3, post4]
     assert follow4 == [post4]
+    
