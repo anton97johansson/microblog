@@ -1,0 +1,18 @@
+FROM python:3.6-alpine
+
+WORKDIR /microblog
+
+COPY requirements requirements
+COPY requirements.txt requirements.txt
+COPY test.sh ./
+
+RUN python -m venv .venv
+RUN apk update
+RUN apk add make g++ clang build-base
+RUN .venv/bin/pip3 install -U pylint
+RUN .venv/bin/pip3 install -r requirements/test.txt
+
+
+EXPOSE 5000
+
+ENTRYPOINT ["./test.sh"]
