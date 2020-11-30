@@ -28,7 +28,7 @@ We have 4 playbooks provision_instances, terminate_instances, gather__instances,
 **provision_instances** is used to create 3 servers on Azure together with their respective security groups, network settings and storage.   
 It Uses the roles provision_instances that waits for all of the security_groups to be created. It also connects the load balancers ip to your domain name.
 
-**gather__instances** fins all active virtual machines has an ip address connected to it and, adds them to the hosts. After we have run this playbook we can use the following hosts in other playbooks: 
+**gather__instances** fins all active virtual machines has an ip address connected to it and, adds them to the hosts. After we have run this playbook we can use the following hosts in other playbooks:
 - `appServer` only the server for the app
 - `database` only for the database server
 - `loadBalancer` only the load balancer server
@@ -63,7 +63,7 @@ ssh-add ~/.ssh/azure
 
 #### Azure
 
-You need credentials from Azure to allow Ansible to manage servers. 
+You need credentials from Azure to allow Ansible to manage servers.
 This can be done by ether creating a file in your `$HOME/.azure/` folder called `credentials` or using ENV variables.
 
 The `credentials` requires you to add the login information together with the subscription id.
@@ -74,6 +74,7 @@ The file should look like the following:
 ad_user=<acronym>@student.bth.se
 password=<password>
 subscription_id=<XXxxxxXX-XxxX-XxxX-XxxX-XXxxxXXXxxXX>
+tenant=<yyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy>
 ```
 
 Replace `acronym` with your student acronym. The `password` should be the same you use to login in to azure. Your `subscription_id` can be found inside the *Information* box when overlooking your resource group on the website.
@@ -84,6 +85,7 @@ The environmental variables uses the same values but slightly different keys:
 export AZURE_AD_USER='acronym@student.bth.se'
 export AZURE_PASSWORD='<password>'
 export AZURE_SUBSCRIPTION_ID='<XXxxxxXX-XxxX-XxxX-XxxX-XXxxxXXXxxXX>'
+export AZURE_TENANT=`<yyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy>`
 ```
 
 #### Ansible vault

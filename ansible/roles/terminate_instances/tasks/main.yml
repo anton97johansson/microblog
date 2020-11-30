@@ -1,3 +1,10 @@
 ---
 -   include_tasks: remove_instance.yml
+<<<<<<< HEAD
     with_items: "{{ instances }}"
+=======
+    with_items: "{{ instances }}"
+
+-   name: Refresh hosts/inventory to remove old EC2 isntance
+    meta: refresh_inventory
+>>>>>>> upstream/master
