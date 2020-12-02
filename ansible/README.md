@@ -71,9 +71,9 @@ The file should look like the following:
 
 ```
 [default]
-ad_user=<acronym>@student.bth.se
-password=<password>
-subscription_id=<XXxxxxXX-XxxX-XxxX-XxxX-XXxxxXXXxxXX>
+ad_user=anjj16@student.bth.se
+password=Tilda#1.
+subscription_id=4069d1a2-eaef-4e4a-ba0f-a511e11f3922
 tenant=<yyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy>
 ```
 
