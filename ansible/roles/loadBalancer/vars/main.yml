@@ -1,0 +1,5 @@
+---
+admin_email: "anton97jo@gmail.com"
+lb_method: "ip_hash"
+
+domain_name: anton.fail

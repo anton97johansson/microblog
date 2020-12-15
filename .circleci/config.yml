@@ -51,6 +51,26 @@ jobs:
           command: |
             echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin
             docker push antonvlinux/microblog:latest
+
+  deploy-latest:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - run:
+         name: Install dependancies
+         command: |
+             sudo apt-get install python3-venv
+             python3 -m venv .venv
+             . .venv/bin/activate
+             pip install wheel
+             make install-deploy
+             pip install ansible[azure]
+      - run:
+          name: Deploy appServer
+          command: |
+              . .venv/bin/activate
+              cd ansible
+              ansible-playbook gather_vm_instances.yml appServer.yml
 workflows:
   version: 2
   build-master:

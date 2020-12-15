@@ -1,0 +1,12 @@
+---
+-   name: Copy docker-compose
+    copy:
+        src: files/docker-compose
+        dest: /home/{{ server_user }}/docker-compose.yml
+        owner: "{{ server_user }}"
+        group: "{{ server_user }}"
+        mode: '644'
+
+-   name: Run docker-compose up
+    docker_compose:
+        project_src: /home/{{ server_user }}/

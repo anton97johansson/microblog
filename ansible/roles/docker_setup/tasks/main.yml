@@ -1,0 +1,89 @@
+---
+# -   name: Install docker
+#     shell: curl https://get.docker.com | sh
+
+# -   name: Modify privilege
+#     become: true
+#     shell: usermod -aG docker $USER
+
+# -   name: Change privilege of docker
+#     become: true
+#     file: dest=/usr/bin/docker mode=+x
+
+
+#old
+# -   name: Install setuptools for pip
+#     apt:
+#         force_apt_get: yes
+#         name: "python-setuptools"
+
+# -   name: Install python for pip
+#     apt:
+#         force_apt_get: yes
+#         name: "python{{ '3' if ansible_python.version.major == 3 else '' }}-pip"
+
+# -   name: Install pip
+#     apt:
+#         force_apt_get: yes
+#         name: "python3-pip"
+
+# -   name: Install docker
+#     apt:
+#         force_apt_get: yes
+#         name: "docker"
+
+# -   name: Install docker compose
+#     apt:
+#         force_apt_get: yes
+#         name: "docker-compose"
+
+# -   name: Docker setup step 2
+#     pip:
+#         name: 
+#             - "docker"
+#             - "docker-compose"
+#         executable: pip3
+
+# -   name: Ensure docker deamon is running
+#     service:
+#         name: docker
+#         state: started
+#     become: true
+#end old
+
+
+# -   name: Ensure docker ce is present
+#     apt:
+#         name: "docker-ce"
+#         state: "present"
+
+
+- name: Docker setup step 1
+  apt:
+    name: "{{ packages + pip_packages }}"
+
+- name: Installing docker public key to apt
+  apt_key:
+    id: "{{ docker_key }}"
+    url: "{{ docker_url }}"
+
+- name: Configure docker apt
+  apt_repository:
+    repo: "{{ docker_repo }}"
+    update_cache: true
+
+- name: Install pip
+  apt:
+    name: python3-pip
+
+- name: Docker setup step 2
+  pip:
+    name: 
+        - "docker"
+        - "docker-compose"
+    executable: pip3
+
+- name: Docker setup step 3
+  apt:
+    name: "docker-ce"
+    state: "present" 

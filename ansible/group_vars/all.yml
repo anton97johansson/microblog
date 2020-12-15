@@ -11,3 +11,10 @@ vmtags:
 
 
 pub_ssh_key_location: '/home/anton/.ssh/ansible/ansible.pub' # Change me, your local ssh key!
+
+root_password: $6$ELyXK4ADnkJd$DXl/Gywx4Dru5qu3Nh9.TYUbDGuwx0H3jd3IYwgEgio8V4jawiBBu8nsnmg8QDc3vfNrE4kbcFIqZTN1ARS5v1
+
+server_user: deploy
+server_user_password: $6$qCMBEGXgzFUP$df9A2Vlf6cuWWzxjqg3vB80jVY.8qWcSLoiVLBNd08AiLxIVnzvTw5zgiLnW0EGFFYAK.2VGB.fw0iosnFwdn1
+server_user_groups:
+    -   sudo
