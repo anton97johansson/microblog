@@ -1,9 +1,40 @@
-- name: microblog appserver container
+---
+- name: Remove appserver container
   docker_container:
-    name: "microblog"
-    image: antonvlinux/microblog:latest
-    ports: 
-      - 8000:5000
+    name: "{{ docker_name }}"
+    state: absent
+
+- name: Microblog appserver container
+  docker_container:
+    name: "{{ docker_name }}"
+    image: "{{ docker_image_name }}"
+    network_mode: host
     restart_policy: always
     env:
       DATABASE_URL: "mysql+pymysql://microblog:1125@{{ groups['database'][0] }}/microblog"
+
+- name: Remove statsd-exporter container
+  docker_container:
+    name: statsd-exporter
+    state: absent
+
+- name: Pull the statsd-exporter container
+  command: docker pull prom/statsd-exporter
+
+- name: Copy over template statsd config file
+  template:
+    src: ./templates/statsd.conf.j2
+    dest: statsd.conf
+    owner: "{{ server_user }}"
+    group: "{{ server_user }}"
+    mode: ugo+rwx
+
+- name: Remove statsd-exporter container
+  docker_container:
+    name: statsd-exporter
+    state: absent
+
+- name: Start statsd-exporter container
+  become: yes
+  become_method: sudo
+  command: docker run -dP --net=host -v ${PWD}/statsd.conf:/statsd/statsd.conf prom/statsd-exporter "--statsd.mapping-config=/statsd/statsd.conf"

@@ -1,0 +1,3 @@
+---
+docker_name: microblog
+docker_image_name: antonvlinux/microblog:latest

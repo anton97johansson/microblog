@@ -1,0 +1,133 @@
+---
+- name: Create prometheus user
+  user:
+    name: "{{ prometheus_user }}"
+    system: yes
+    create_home: no
+    state: present
+
+- name: Download and unarchive prometheus
+  unarchive:
+    src: "{{ prometheus_version_path }}"
+    dest: /home/{{ server_user }}
+    remote_src: yes
+
+- name: Copy prometheus to bin folder
+  copy:
+    src: /home/{{ server_user }}/{{ prometheus_dir_name }}/prometheus
+    dest: /usr/local/bin/
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: '0755'
+    remote_src: yes
+
+- name: Copy promtool to bin folder
+  copy:
+    src: /home/{{ server_user }}/{{ prometheus_dir_name }}/promtool
+    dest: /usr/local/bin/
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: '0755'
+    remote_src: yes
+
+- name: Create /etc/prometheus directory
+  file:
+    path: /etc/prometheus
+    state: directory
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: '0755'
+
+- name: Create /var/lib/prometheus directory
+  file:
+    path: /var/lib/prometheus
+    state: directory
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: '0755'
+
+- name: Copy prometheus/consoles to directory
+  copy:
+    src: /home/{{ server_user }}/{{ prometheus_dir_name }}/consoles
+    dest: /etc/prometheus
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: '0755'
+    remote_src: yes
+
+- name: Copy prometheus/console_libraries to directory
+  copy:
+    src: /home/{{ server_user }}/{{ prometheus_dir_name }}/console_libraries
+    dest: /etc/prometheus
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: '0755'
+    remote_src: yes
+
+- name: Remove tmp dir
+  file:
+    path: /home/{{ server_user }}/{{ prometheus_dir_name }}/
+    state: absent
+
+- name: Modify the prometheus.yml config file
+  template:
+    src: ./templates/prometheus_template.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: "{{ server_user }}"
+    group: "{{ server_user }}"
+    mode: '0644'
+
+- name: Create and setup prometheus service
+  template:
+    src: ./templates/prometheus.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: "{{ server_user }}"
+    group: "{{ server_user }}"
+    mode: '0644'
+
+- name: Reload systemctl 
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable prometheus
+  systemd:
+    state: started
+    name: prometheus
+    enabled: yes
+
+- name: Download grafana
+  get_url:
+    url: "{{ grafana_url }}"
+    dest: /home/{{ server_user }}
+
+- name: Install adduser libfontconfig1 packages
+  apt:
+    force_apt_get: yes
+    pkg:
+      - adduser
+      - libfontconfig1
+
+- name: Install grafana
+  command: dpkg -i /home/{{ server_user }}/{{ grafana_file_name }}
+
+- name: Copy grafana.ini to directory
+  template:
+    src: templates/grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+    mode: "go-w"
+
+- name: Remove grafana deb file
+  file:
+    path: /home/{{ server_user }}/{{ grafana_file_name }}
+    state: absent
+
+- name: Reload systemctl 
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable grafana-server
+  systemd:
+    state: started
+    name: grafana-server
+    enabled: yes 
+    

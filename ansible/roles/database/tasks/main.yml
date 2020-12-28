@@ -1,12 +1,49 @@
 ---
--   name: Copy docker-compose
-    copy:
-        src: files/docker-compose
-        dest: /home/{{ server_user }}/docker-compose.yml
-        owner: "{{ server_user }}"
-        group: "{{ server_user }}"
-        mode: '644'
+- name: Launch database container
+  docker_container:
+    name: "{{ docker_name }}"
+    image: "{{ docker_image_name }}"
+    published_ports: 3306:3306
+    volumes:
+      - "/var/lib/mysql:/var/lib/mysql"
+    restart: True
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ mysql_root_pass|quote }}"
+      MYSQL_DATABASE: "{{ mysql_database_name|quote }}"
+      MYSQL_USER: "{{ mysql_user|quote }}"
+      MYSQL_PASSWORD: "{{ mysql_pass|quote }}"
 
--   name: Run docker-compose up
-    docker_compose:
-        project_src: /home/{{ server_user }}/
+- name: Sleep for 30 seconds and continue
+  wait_for:
+      timeout: 30
+
+- name: Copy mysql exporter setup
+  copy:
+    src: files/setup.sql
+    dest: /home/{{ server_user }}/
+    owner: "{{ server_user }}"
+    group: "{{ server_user }}"
+    mode: "0644"
+
+- name: Access mysql container and add exporter user
+  become: yes
+  become_method: sudo
+  shell: docker exec -i microblog-database mysql -uroot -p{{ mysql_root_pass }} < /home/{{ server_user }}/setup.sql
+
+- name: Pull mysql-exporter container
+  command: docker pull prom/mysqld-exporter
+
+- name: Start mysql-exporter container
+  become: yes
+  become_method: sudo
+  command: docker run -d \
+      -p 9104:9104 \
+      --network host \
+      -e DATA_SOURCE_NAME="exporter:pass@(localhost:3306)/" \
+      --restart always \
+      prom/mysqld-exporter:latest \
+      --collect.auto_increment.columns \
+      --collect.binlog_size \
+      --collect.engine_innodb_status \
+      --collect.engine_tokudb_status \
+      --collect.global_status \
