@@ -146,6 +146,11 @@ run-test:
 .PHONY: exec-tests
 exec-tests: test-unit test-integration
 
+# target: bandit                   - Run bandit on app
+.PHONY: bandit
+bandit: 
+	bandit -r app
+
 
 
 # target: test                         - Run tests and display code coverage

@@ -23,6 +23,7 @@ jobs:
             make install-test
             make validate
             make exec-tests
+            make bandit
   build:
     executor: docker-publisher
     steps:
