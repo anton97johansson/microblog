@@ -31,6 +31,13 @@ http {
        listen 443 ssl;
        server_name  {{ domain_name }} www.{{ domain_name }};
        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+       proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
+       add_header X-Content-Type-Options nosniff;
+       add_header X-Frame-Options "DENY";
+       proxy_cookie_path / "/; HTTPOnly; Secure";
+       add_header "Cache-Control" "max-age=0, no-cache, no-store, must-revalida$
+       add_header "Pragma" "no-cache";
+
 
        ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/cert.pem;
        ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;

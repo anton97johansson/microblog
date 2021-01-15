@@ -151,6 +151,11 @@ exec-tests: test-unit test-integration
 bandit: 
 	bandit -r app
 
+# target: zap			              - Run zap on live 
+.PHONY: zap
+zap:
+	docker run -t owasp/zap2docker-stable zap-baseline.py -t https://www.anton.fail
+
 
 
 # target: test                         - Run tests and display code coverage
