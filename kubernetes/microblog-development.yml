@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microblog
+spec:
+  type: NodePort
+  selector:
+    app: microblog
+  ports:
+      # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
+    - port: 5000
+      # Optional field
+      # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+      # nodePort: 30007
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microblog
+spec:
+  selector:
+    matchLabels:
+      app: microblog
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: microblog
+    spec:
+      containers:
+      - name: microblog
+        image: granhof/microblog:no-statsd
+        env:
+        - name: SECRET_KEY
+          value: itsasecret
+        - name: DATABASE_URL
+          value: mysql+pymysql://microblog:1125@mysql:3306/microblog
+        ports:
+        - containerPort: 5000
